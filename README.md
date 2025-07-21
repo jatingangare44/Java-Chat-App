@@ -46,3 +46,10 @@ Compile and run `Server.java`:
 ```bash
 javac Server.java
 java Server
+```
+### 2. Start the Client
+Compile and run `Client.java`:
+```bash
+javac Client.java
+java Client
+```
