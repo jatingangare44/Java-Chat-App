@@ -91,6 +91,9 @@ Developed as part of a **Java Networking and Cryptography project**.
 
 <img width="479" height="635" alt="image" src="https://github.com/user-attachments/assets/caec8b03-0836-480c-a264-8f99ed2e9458" />
 
+<img width="1058" height="184" alt="image" src="https://github.com/user-attachments/assets/dc9253fe-fd45-4be5-8fab-29d077b5218e" />
+
+
 
 
 
