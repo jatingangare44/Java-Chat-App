@@ -1,58 +1,67 @@
-# Java Chat Application
+# Java Encrypted Chat Application
 
-This is a **Java-based Chat Application** that supports both public and private messaging features between clients connected to a central server. The chat messages are encrypted using AES encryption for enhanced privacy.
+## Overview
+This project is a **Java-based real-time chat application** with **AES encryption**, private messaging, and typing indicators. 
+It includes both server and client components and supports multiple users communicating securely.
 
 ## Features
+- **AES Encryption:** All messages are encrypted for secure communication.
+- **Typing Indicator:** Shows when a user is typing in real-time.
+- **Private Chat:** Ability to send private messages to selected users.
+- **Auto Guest Names:** Users without nicknames are automatically assigned `Guest1`, `Guest2`, etc.
+- **User List:** Displays all currently connected users.
+- **GUI Client:** A JavaFX-based chat interface with modern chat bubbles.
 
-- **Multi-client support** via socket programming.
-- **Private chat windows** for one-on-one communication.
-- **AES encryption** of messages.
-- GUI implemented using **JavaFX**.
-- Timestamps and formatted message display.
-- Auto-scroll and smooth chat interactions.
-
-## Components
-
-### 🔹 `Server.java`
-- Handles multiple clients using multithreading.
-- Broadcasts messages to all clients.
-- Manages client connections and disconnections.
-
-### 🔹 `Client.java`
-- Connects to the server.
-- Provides a JavaFX-based GUI for public chatting.
-- Allows users to initiate private chats.
-
-### 🔹 `PrivateChatWindow.java`
-- Creates a new JavaFX window for private one-on-one communication.
-- Supports sending and receiving encrypted messages.
-
-### 🔹 `PrivateChatManager.java`
-- Singleton manager to handle unique private chat windows.
-- Prevents multiple windows for the same user pair.
-
-### 🔹 `AESEncryption.java`
-- Utility class to encrypt and decrypt chat messages using AES algorithm.
+## Project Structure
+- **Server.java:** Handles client connections, broadcasts messages, and manages user lists.
+- **Client.java:** GUI client application built with JavaFX, connects to the server.
+- **AESEncryption.java:** Provides AES-based message encryption/decryption.
+- **PrivateChatManager.java:** Manages private chat windows and sessions.
+- **PrivateChatWindow.java:** GUI for private chat between two users.
 
 ## Requirements
-
-- Java 8 or above.
-- JavaFX SDK (for GUI components).
+- **Java 11 or above**
+- **JavaFX SDK** (required for GUI)
+- **IDE:** IntelliJ IDEA / Eclipse / VS Code (or any Java IDE)
 
 ## How to Run
-
 ### 1. Start the Server
-Compile and run `Server.java`:
+Compile and run the `Server.java` file:
 ```bash
 javac Server.java
 java Server
 ```
+The server will start on **port 12345**.
+
 ### 2. Start the Client
-Compile and run `Client.java`:
+Compile and run the `Client.java` file:
 ```bash
 javac Client.java
 java Client
 ```
+- Enter a nickname when prompted.
+- If no nickname is given, the system assigns a guest name (`Guest1`, `Guest2`, etc.).
+
+### 3. Start Multiple Clients
+Run multiple instances of `Client.java` to simulate multiple users chatting in real-time.
+
+## Private Messaging
+- To send a private message, click on a username from the user list. 
+- A **Private Chat Window** will open where you can chat securely.
+
+## Typing Indicator
+- When a user is typing, other users see a "User is typing..." message in real-time.
+
+## Future Enhancements
+- File transfer support
+- Emojis and stickers
+- Message history with database storage
+
+## Author
+Developed as part of a **Java Networking and Cryptography project**.
+
+---
+
 
 ## Screenshots
 <img width="1050" height="238" alt="image" src="https://github.com/user-attachments/assets/ebf3f273-6b7c-4931-b239-3b3974071138" />
