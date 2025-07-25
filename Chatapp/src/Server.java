@@ -2,52 +2,64 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Server {
     private static final int PORT = 12345;
-    private static ConcurrentHashMap<String, ClientHandler> clients = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, ClientHandler> clients = new ConcurrentHashMap<>();
+    private static final AtomicInteger guestCounter = new AtomicInteger(1);
 
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-			System.out.println("Server started on port " + PORT);
+            System.out.println("Server started on port " + PORT);
 
-			while (true) {
-			    Socket clientSocket = serverSocket.accept();
-			    BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			    PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
 
-			    String nickname;
+                String nickname;
 
-			    while (true) {
-			        writer.println("Enter your nickname:");
-			        nickname = reader.readLine();
+                while (true) {
+                    writer.println("Enter your nickname:");
+                    nickname = reader.readLine();
 
-			        if (nickname == null) {
-			            clientSocket.close();
-			            return;
-			        }
+                    if (nickname == null) {
+                        clientSocket.close();
+                        return;
+                    }
 
-			        nickname = nickname.trim();
+                    nickname = nickname.trim();
 
-			        if (nickname.isEmpty()) {
-			            writer.println("Nickname cannot be empty.");
-			        } else if (clients.containsKey(nickname)) {
-			            writer.println("Nickname already in use. Try another.");
-			        } else {
-			            writer.println("OK");
-			            break;
-			        }
-			    }
+                    if (nickname.isEmpty()) {
+                        nickname = assignGuestName();
+                        writer.println("OK " + nickname);
+                        break;
+                    } else if (clients.containsKey(nickname)) {
+                        writer.println("Nickname already in use. Try another or leave blank for auto guest.");
+                    } else {
+                        writer.println("OK " + nickname); 
+                        break;
+                    }
+                }
 
-			    ClientHandler clientHandler = new ClientHandler(clientSocket, nickname);
-			    clients.put(nickname, clientHandler);
-			    new Thread(clientHandler).start();
+                ClientHandler clientHandler = new ClientHandler(clientSocket, nickname);
+                clients.put(nickname, clientHandler);
+                new Thread(clientHandler).start();
 
-			    broadcast(nickname + " joined the chat.", null);
-			    sendUserListToAll();
-			    System.out.println(nickname + " connected.");
-			}
-		}
+                broadcast(nickname + " joined the chat.", null);
+                sendUserListToAll();
+                System.out.println(nickname + " connected.");
+            }
+        }
+    }
+
+    private static String assignGuestName() {
+        String name;
+        do {
+            name = "guest" + guestCounter.getAndIncrement();
+        } while (clients.containsKey(name));
+        return name;
     }
 
     public static void broadcast(String message, String sender) {
@@ -68,6 +80,7 @@ public class Server {
         clients.remove(nickname);
         broadcast(nickname + " left the chat.", null);
         sendUserListToAll();
+        System.out.println(nickname + " disconnected.");
     }
 
     public static void sendUserListToAll() {
@@ -93,7 +106,6 @@ public class Server {
         return AESEncryption.decrypt(message);
     }
 
-
     static class ClientHandler implements Runnable {
         private Socket socket;
         private PrintWriter out;
@@ -112,11 +124,11 @@ public class Server {
             try {
                 while ((message = in.readLine()) != null) {
                     if (message.startsWith("/typing ")) {
-                        Server.broadcast("[TYPING]" + message.substring(8), nickname);
+                        Server.broadcast("[TYPING]" + nickname, nickname);
                         continue;
                     }
                     if (message.startsWith("/typingdone ")) {
-                        Server.broadcast("[TYPING_END]" + message.substring(12), nickname);
+                        Server.broadcast("[TYPING_END]" + nickname, nickname);
                         continue;
                     }
                     if (message.trim().equalsIgnoreCase("/quit")) {
