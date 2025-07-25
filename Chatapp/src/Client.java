@@ -26,6 +26,9 @@ public class Client extends Application {
     private String nickname;
     private ListView<String> userListView;
 
+    private static final String TYPING = "[TYPING]";
+    private static final String TYPING_END = "[TYPING_END]";
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -47,18 +50,21 @@ public class Client extends Application {
                     out.println(nickname);
                     String response = in.readLine();
                     if (response == null) return;
-                    if (response.trim().equalsIgnoreCase("OK")) {
+
+                    if (response.startsWith("OK")) {
+                        String[] parts = response.split("\\s+", 2);
+                        if (parts.length == 2) {
+                            nickname = parts[1].trim();
+                        }
                         accepted = true;
                     } else {
                         showError("Nickname Error", response);
                     }
-                    if (!accepted) in.readLine();
                 }
                 break;
             }
         }
 
-        // Step 2: UI Setup
         messageContainer = new VBox(5);
         messageContainer.setPadding(new Insets(10));
 
@@ -141,7 +147,6 @@ public class Client extends Application {
             }
         });
 
-        // Step 3: Message receiver thread
         new Thread(() -> {
             try {
                 String msg;
@@ -150,12 +155,12 @@ public class Client extends Application {
                     try {
                         String decrypted = decrypt(finalMsg);
 
-                        if (decrypted.startsWith("[TYPING]")) {
-                            String user = decrypted.substring(9);
+                        if (decrypted.startsWith(TYPING)) {
+                            String user = decrypted.substring(TYPING.length()).trim();
                             if (!user.equals(nickname)) {
                                 Platform.runLater(() -> typingLabel.setText(user + " is typing..."));
                             }
-                        } else if (decrypted.startsWith("[TYPING_END]")) {
+                        } else if (decrypted.startsWith(TYPING_END)) {
                             Platform.runLater(() -> typingLabel.setText(""));
                         } else if (decrypted.startsWith("/userlist ")) {
                             String[] users = decrypted.substring(10).split(",");
@@ -227,8 +232,8 @@ public class Client extends Application {
 
     private String promptForNickname() {
         TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText("Enter your nickname:");
-        return dialog.showAndWait().orElse("Guest");
+        dialog.setHeaderText("Enter your nickname (leave blank for guest):");
+        return dialog.showAndWait().orElse("").trim(); 
     }
 
     private String decrypt(String message) {
