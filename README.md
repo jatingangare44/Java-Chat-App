@@ -1,8 +1,19 @@
-# Java Encrypted Chat Application
+# Java Encrypted Chat Application (Internship Project with Elevate Labs)
 
 ## Overview
-This project is a **Java-based real-time chat application** with **AES encryption**, private messaging, and typing indicators. 
-It includes both server and client components and supports multiple users communicating securely.
+This project was developed as part of my **2-week internship phase with Elevate Labs**. It is a **real-time peer-to-peer chat system** built using **Java, Socket Programming, Threads, and JavaFX**. The application includes **AES-based encryption**, **private messaging**, **typing indicators**, and **automatic guest nickname assignment**.
+
+## Internship Objective
+**Objective:** Create a real-time peer-to-peer chat system.  
+**Tools:** Java, Socket Programming, Threads
+
+**Mini Guide (as provided):**
+1. Implement `ServerSocket` to handle clients.  
+2. Create `ClientHandler` using threads.  
+3. Design a simple text-based GUI with JavaFX.  
+4. Allow group and private messaging.  
+5. Add user nicknames and connection logs.  
+6. Implement basic message encryption.
 
 ## Features
 - **AES Encryption:** All messages are encrypted for secure communication.
